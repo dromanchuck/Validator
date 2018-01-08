@@ -5,3 +5,5 @@ Task 1: create validator to validate input object with predefined rules.
 ● Validator should be in ES5, (without ES6 classes)
 
 ● Rule class should have the following methods for validation: isRequired, maxLength, minLength, max, min, isEmail, isInt. There should be an ability to chain rules together (new Rule().isRequired().isInt()).
+## Validate(jasmine) ##
+[Validator](https://zmitrok777.github.io/Validator)
