@@ -1,4 +1,3 @@
-
 var Validator = function () {
 }
 var validator = new Validator();
