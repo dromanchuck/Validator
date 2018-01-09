@@ -1,88 +1,88 @@
-// Объект Валидатор, у которого есть статический метод валидации
-// который принимает объект с значениями и объект с правилами.
-// в случае успешной валидации выдает объект с данными
-// в случае возникновения ошибок, выдает объект с ошибками
-var Validator = {
-};
-Validator.validate = function(rules, values) {
-	return new Promise((resolve, reject)=>{
-		var errors = {};
-		for(var rule in rules) {
-			for(var nameOfRule in rules[rule]){
-				if(rules[rule][nameOfRule](values[rule]) !== true) {
-					errors[rule] = rules[rule][nameOfRule](values[rule]);
-				}
+
+var Validator = function () {
+}
+var validator = new Validator();
+Validator.prototype.validate = function(rules) {
+    return new Promise((resolve, reject)=>{
+        var errors = {};
+        var results = {};
+        for(var rule in rules) {
+            if(rules[rule].errorMessage.length == 0) {
+            	results[rule] = rules[rule];
+			} else {
+            	errors[rule] = rules[rule].errorMessage;
 			}
-		}
-		//check errors object
-        for (val in errors) {
-		    reject(errors);
         }
-		resolve(values);
+        //check errors object
+        for (val in errors) {
+            reject(errors);
+        }
+        resolve(results);
     }).then(
-    	result => {
-    		console.log('Data:' + JSON.stringify(result));
-		}
-	). catch(
-		error=> {
-			console.log('Errors:' + JSON.stringify(error));
-		}
-	);
+        result => {
+            return result;
+        }
+    ). catch(
+        error=> {
+            return error;
+        }
+    );
 };
-//объект значений
-var values = {
-	name:'asadfghj',
-	password:'shitasdfasdfasdfasdf',
-	email: 'realte@mail.ru'
-};
-//объект правил
- var rules = {
- 	name:{},
- 	password:{},
- 	email:{}
- };
- rules.name.maxLength = function(name) {
- 	if(name.length > 24) {
- 		return 'max length of name is 24';
- 	} else {
- 		return true;
- 	}
- };
- rules.name.minLength = function(name) {
- 	if(name.length < 5) {
- 		return 'minLength is 5';
- 	} else {
- 		return true;
- 	}
- };
- rules.name.isRequired = function(name) {
- 	if(name) {
- 		return true;
-	} else {
- 		return 'necessary field';
-	}
- };
- rules.password.maxLength = function(password) {
- 	if(password.length > 64) {
- 		return 'max length of password is 64';
-	} else {
- 		return true;
-	}
- };
- rules.password.minLength = function(password) {
- 	if(password.length < 8) {
- 		return 'min length of password is 8';
-	} else {
- 		return true;
-	}
- };
- rules.email.isEmail = function(email) {
-     var r = /^[\w\.\d-_]+@[\w\.\d-_]+\.\w{2,4}$/i;
-     if(!r.test(email)) {
-	 	return 'incorrect email';
-     } else {
-     	return true;
-	 }
- };
-rules.password.isRequired = rules.name.isRequired;
- Validator.validate(rules, values);
+	var Rules = function(value) {
+		this.value = value;
+		this.errorMessage = [];
+	};
+	Rules.prototype.maxLength = function(max) {
+		if(this.value > max) {
+			this.errorMessage.push('Max length is ' + max);
+		}
+		return this;
+	};
+	Rules.prototype.minLength = function(min) {
+		if(this.value < min) {
+			this.errorMessage.push('Min length is ' + min);
+		}
+		return this;
+	};
+	Rules.prototype.isRequired = function() {
+		if(this.value.length == 0) {
+			this.errorMessage.push('Field is empty');
+		}
+		return this;
+	};
+	Rules.prototype.isEmail = function() {
+		var r = /^[\w\.\d-_]+@[\w\.\d-_]+\.\w{2,4}$/i;
+		if(!r.test(this.value)) {
+			this.errorMessage.push('Incorrect email');
+		}
+		return this;
+	};
+	Rules.prototype.max = function(max) {
+		if(isNaN(Number(this.value))) {
+			this.errorMessage.push('Validate value is not a number');
+		} else if(this.value > max) {
+			this.errorMessage.push('Max value is ' + max);
+		}
+		return this;
+	};
+
+	Rules.prototype.min = function(min) {
+        if(isNaN(Number(this.value))) {
+            this.errorMessage.push('Validate value is not a number');
+        } else if(this.value < min) {
+            this.errorMessage.push('Min value is ' + min);
+        }
+        return this;
+	};
+	Rules.prototype.isInt = function() {
+        if(isNaN(Number(this.value))) {
+            this.errorMessage.push('Validate value is not a number');
+        } else if(parseInt(this.value) !== this.value) {
+        	this.errorMessage.push('Validate value is not Int');
+		}
+		return this;
+	};
+	var password = new Rules('asdfasdfasdf').maxLength(30).minLength(5);
+	var email = new Rules('realtek_9agmail.com').isEmail();
+	validator.validate({password, email});
+
