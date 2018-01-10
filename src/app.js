@@ -32,13 +32,13 @@ Validator.prototype.validate = function(rules) {
 		this.errorMessage = [];
 	};
 	Rules.prototype.maxLength = function(max) {
-		if(this.value > max) {
+		if(this.value.length > max) {
 			this.errorMessage.push('Max length is ' + max);
 		}
 		return this;
 	};
 	Rules.prototype.minLength = function(min) {
-		if(this.value < min) {
+		if(this.value.length < min) {
 			this.errorMessage.push('Min length is ' + min);
 		}
 		return this;

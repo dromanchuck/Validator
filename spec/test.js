@@ -1,61 +1,54 @@
-describe('validator-test', function () {
-    it('test_fail email', function () {
-        var values = {
-            name:'asadfghj',
-            password:'shitasdfasdfasdfasdf',
-            email: 'realtemail.ru'
-        };
-//объект правил
-        var rules = {
-            name:{},
-            password:{},
-            email:{}
-        };
-        rules.name.maxLength = function(name) {
-            if(name.length > 24) {
-                return 'max length of name is 24';
-            } else {
-                return true;
-            }
-        };
-        rules.name.minLength = function(name) {
-            if(name.length < 5) {
-                return 'minLength is 5';
-            } else {
-                return true;
-            }
-        };
-        rules.name.isRequired = function(name) {
-            if(name) {
-                return true;
-            } else {
-                return 'necessary field';
-            }
-        };
-        rules.password.maxLength = function(password) {
-            if(password.length > 64) {
-                return 'max length of password is 64';
-            } else {
-                return true;
-            }
-        };
-        rules.password.minLength = function(password) {
-            if(password.length < 8) {
-                return 'min length of password is 8';
-            } else {
-                return true;
-            }
-        };
-        rules.email.isEmail = function(email) {
-            var r = /^[\w\.\d-_]+@[\w\.\d-_]+\.\w{2,4}$/i;
-            if(!r.test(email)) {
-                return 'incorrect email';
-            } else {
-                return true;
-            }
-        };
-        expect(Validator.validate(rules, values)).toBe();
+
+describe('Test Validator', function() {
+    validator = new Validator();
+
+    describe('Check validate method :', function () {
+        it('Should return true, if validation is success', function () {
+            var name = new Rules('John').maxLength(20).minLength(1).isRequired();
+            var email = new Rules('dr.er@gmail.com').isEmail().isRequired();
+            var password = new Rules('qwertyyuuuiii').minLength(4).maxLength(16);
+            expect(validator.validate({name, email, password})).toBe(true);
+        });
+        it('Should return false, if validation is failed', function () {
+            var name = new Rules('John').maxLength(20).minLength(1).isRequired();
+            var email = new Rules('dr.gmail.com').isEmail().isRequired();
+            var password = new Rules('qwertyyuuuiii').minLength(4).maxLength(8);
+            expect(validator.validate({name, email, password,})).toBe(false);
+        });
+    });
+    describe('Test rules methods:', function () {
+        describe('Test maxLength():', function () {
+            it('Should return true, if length of value is less than max length', function () {
+                var name = new Rules('asdasdfasdf').maxLength(20);
+                expect(validator.validate({name})).toBe(true);
+            });
+            it('Should return false, if length of validate value is more than max length', function () {
+                var name = new Rules('asdfasdgas').maxLength(4);
+                expect(validator.validate({name})).toBe(false);
+            });
+        });
+        describe('Test minLength():', function () {
+            it('Should return true, if length of value is more than min length', function () {
+                var name = new Rules('asdasdfasdf').minLength(3);
+                expect(validator.validate({name})).toBe(true);
+            });
+            it('Should return false, if length of validate value is less than min length', function () {
+                var name = new Rules('as').minLength(4);
+                expect(validator.validate({name})).toBe(false);
+            });
+        });
+        describe('Test isEmail():', function () {
+            it('Should return true, if email is correct', function () {
+                var email = new Rules('realtek_95@mail.ru').isEmail();
+                expect(validator.validate({email})).toBe(true);
+            });
+            it('Should return false, if email is incorrect', function () {
+                var email = new Rules('raeasфывафыв@masd.tu').isEmail();
+                expect(validator.validate({email})).toBe(false);
+            });
+        });
 
     });
 
 });
+
