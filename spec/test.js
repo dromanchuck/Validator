@@ -7,7 +7,10 @@ describe('Test Validator', function() {
             var name = new Rules('John').maxLength(20).minLength(1).isRequired();
             var email = new Rules('dr.er@gmail.com').isEmail().isRequired();
             var password = new Rules('qwertyyuuuiii').minLength(4).maxLength(16);
-            expect(validator.validate({name, email, password})).toBe(true);
+            
+            var result = validator.validate({name, email, password});
+           
+            expect(result).toBe(true);
         });
         it('Should return false, if validation is failed', function () {
             var name = new Rules('John').maxLength(20).minLength(1).isRequired();
